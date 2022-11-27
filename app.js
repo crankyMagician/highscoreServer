@@ -1,11 +1,23 @@
 import express from 'express'
+import cors from 'cors'
 import { getHighScores, getScores, submitHighScore } from './database.js'
+
+//added 
+//var cors = require('cors')
 
 const app = express()
 
+//use cors 
+app.use(cors())
+//
 app.use(express.json())
 
-app.get("/scores",async (req, res) => {
+var corsOptions = {
+    origin: 'https://192.168.1.243/',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }
+
+app.get("/scores", async (req, res) => {
     const scores = await getHighScores()
     res.send(scores)
 })
