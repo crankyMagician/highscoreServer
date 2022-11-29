@@ -1,16 +1,29 @@
 import express from 'express'
 import cors from 'cors'
-import { getHighScores, getScores, submitHighScore } from './database.js'
+import https from 'https'
+import fs from 'fs'
+import { getHighScores, getScores, submitHighScore, activePort } from './database.js'
 
+
+// Import builtin NodeJS modules to instantiate the service
+//const https = use("https");
+
+ //app.use(https);
 //added 
 //var cors = require('cors')
 
 const app = express()
 
+//helmet 
+//const helmet = require('helmet');
+//app.use(helmet);
 //use cors 
 app.use(cors())
 //
 app.use(express.json())
+
+
+
 
 var corsOptions = {
     origin: 'https://192.168.1.243/',
@@ -31,7 +44,7 @@ app.post("/scores/create", async(req, res)=>{
     const scoreSubmit = await submitHighScore(newScore.userName, newScore.score)
     res.status(201).send(scoreSubmit)
     console.log("Score submitted:"+scoreSubmit)
-})
+})  
 
 
 app.use((err, req, res, next) => {
@@ -40,6 +53,20 @@ app.use((err, req, res, next) => {
   })
 
 
+  // Create a NodeJS HTTPS listener on port 4000 that points to the Express app
+// Use a callback function to tell when the server is created.
+https
+.createServer(
+  {
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+  },
+  app)
+.listen(activePort(), ()=>{
+  console.log('Server is running on');
+});
+
   app.listen(8080,()=>{
     console.log('listening on port 8080')
-  })
+  });
+  

@@ -8,19 +8,27 @@ const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQ_PASS,
-    database: process.env.MYSQL_DB
+    database: process.env.MYSQL_DB,
+    //port: process.env.PORT
 //using promise for async
 }).promise()
 
+const activePORT = process.env.PORT;
 
 export async function getScores(){
 
 const [result] = await pool.query("SELECT * FROM scores")
 
-console.log("Results rendered from get scores: "+result)
+console.log("Results rendered from get scores: "+result[0] + " " + result[1])
 return result;
 
 };
+
+//return port number
+export function activePort(){
+    console.log("Port requested and returned" + activePORT.PORT);
+    return pool.PORT;
+}
 //5 top high scores for
 export async function getHighScores(){
     const [result] = await pool.query(`
@@ -45,13 +53,14 @@ export async function submitHighScore(userName, score){
 
 }
 
-
-/* const scores = await getScores();
+/*
+const scores = await getScores();
 
 const highScores = await getHighScores()
 
 const newScore = await submitHighScore("TJS", 16)
-console.log(highScores);
-console.log(scores);
+console.log("High scores " + highScores);
+console.log("All scores " + scores);
 
-console.log(newScore); */
+console.log("New score: " + newScore); 
+*/
